@@ -11,7 +11,8 @@ libbsdtests_la_SOURCES=				\
 	bsdtests.h				\
 	dispatch_test.c				\
 	dispatch_test.h				\
-	linux_port.h
+	linux_port.h				\
+	haiku_port.h
 
 check_PROGRAMS=					\
 	bsdtestharness				\

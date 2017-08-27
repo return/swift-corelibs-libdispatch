@@ -20,7 +20,7 @@
 #ifdef __ANDROID__
 #include <sys/syscall.h>
 #else
-#include <syscall.h>
+//#include <syscall.h>
 #endif /* __ANDROID__ */
 
 #if __has_include(<config/config_ac.h>)

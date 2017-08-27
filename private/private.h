@@ -179,7 +179,7 @@ void _dispatch_prohibit_transition_to_multithreaded(bool prohibit);
 
 #if TARGET_OS_MAC
 typedef mach_port_t dispatch_runloop_handle_t;
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__HAIKU__)
 typedef int dispatch_runloop_handle_t;
 #else
 #error "runloop support not implemented on this platform"

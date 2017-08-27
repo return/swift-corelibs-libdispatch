@@ -216,7 +216,7 @@ AC_ARG_WITH([swift-toolchain],
 )
 AM_CONDITIONAL(HAVE_SWIFT, $have_swift)
 AC_SUBST([SWIFTC])
-AC_SUBST([SWIFTC_FLAGS])
+AC_SUBST([SWIFTC_FLAGS], ["-sdk /"])
 AC_SUBST([SWIFT_LIBDIR])
 AC_SUBST([OS_STRING], ["$os_string"])
 
@@ -294,13 +294,14 @@ esac
 #
 AC_SEARCH_LIBS(clock_gettime, rt)
 AC_SEARCH_LIBS(pthread_create, pthread)
+AC_SEARCH_LIBS(getprogname, libbsd)
 
-AC_CHECK_FUNCS([strlcpy getprogname], [],
-  [PKG_CHECK_MODULES(BSD_OVERLAY, libbsd-overlay,[
-    AC_DEFINE(HAVE_STRLCPY, 1, [])
-    AC_DEFINE(HAVE_GETPROGNAME, 1, [])
-  ])], [#include <string.h>]
-)
+#AC_CHECK_FUNCS([strlcpy getprogname], [],
+#  [PKG_CHECK_MODULES(BSD_OVERLAY, libbsd-overlay, [
+#    AC_DEFINE(HAVE_STRLCPY, 1, [])
+#    AC_DEFINE(HAVE_GETPROGNAME, 1, [])
+#  ])], [#include <string.h>]
+#)
 
 #
 # Checks for header files.

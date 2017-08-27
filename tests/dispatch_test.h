@@ -26,6 +26,10 @@
 #include <linux_port.h>
 #endif
 
+#ifdef __HAIKU__
+#include <haiku_port.h>
+#endif
+
 #define test_group_wait(g) do { \
 	if (dispatch_group_wait(g, dispatch_time(DISPATCH_TIME_NOW, \
 			25ull * NSEC_PER_SEC))) { \
@@ -42,7 +46,7 @@ bool dispatch_test_check_evfilt_read_for_fd(int fd);
 void _dispatch_test_current(const char* file, long line, const char* desc, dispatch_queue_t expected);
 #define dispatch_test_current(a,b) _dispatch_test_current(__SOURCE_FILE__, __LINE__, a, b)
 
-#ifndef __linux__
+#if !defined(__linux__) || !defined(__HAIKU__)
 int sysctlbyname(const char *name, void *oldp, size_t *oldlenp, void *newp,
 		size_t *newpl);
 #endif

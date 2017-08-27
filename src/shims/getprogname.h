@@ -28,12 +28,16 @@
 extern const char *__progname;
 #endif /* __ANDROID */
 
+#ifdef __HAIKU__
+extern char *__progname;
+#endif /* __HAIKU */
+
 static inline char *
 getprogname(void)
 {
 # if HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
 	return program_invocation_short_name;
-# elif defined(__ANDROID__)
+# elif defined(__ANDROID__) || defined(__HAIKU__)
 	return __progname;
 # else
 #   error getprogname(3) is not available on this platform

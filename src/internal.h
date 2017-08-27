@@ -246,12 +246,12 @@ DISPATCH_EXPORT DISPATCH_NOTHROW void dispatch_atfork_child(void);
 #include <sys/stat.h>
 
 #if !TARGET_OS_WIN32
-#include <sys/mount.h>
-#include <sys/queue.h>
+//#include <sys/mount.h>
+//#include <sys/queue.h>
 #ifdef __ANDROID__
 #include <linux/sysctl.h>
 #else
-#include <sys/sysctl.h>
+//#include <sys/sysctl.h>
 #endif /* __ANDROID__ */
 #include <sys/socket.h>
 #include <sys/time.h>

@@ -55,6 +55,7 @@ libdispatch_la_SOURCES=			\
 	shims/hw_config.h		\
 	shims/linux_stubs.c		\
 	shims/linux_stubs.h		\
+	shims/haiku_stubs.h		\
 	shims/lock.c			\
 	shims/lock.h			\
 	shims/perfmon.h			\
@@ -65,16 +66,16 @@ libdispatch_la_SOURCES=			\
 EXTRA_libdispatch_la_SOURCES=
 EXTRA_libdispatch_la_DEPENDENCIES=
 
-AM_CPPFLAGS=-I$(top_builddir) -I$(top_srcdir) -I$(top_srcdir)/private
+AM_CPPFLAGS=-I$(top_builddir) -I$(top_srcdir) -I$(top_srcdir)/private -fPIC
 
 DISPATCH_CFLAGS=-Wall $(VISIBILITY_FLAGS) $(OMIT_LEAF_FP_FLAGS) \
-	$(MARCH_FLAGS) $(BSD_OVERLAY_CFLAGS)
+	$(MARCH_FLAGS) $(BSD_OVERLAY_CFLAGS) -fPIC
 if DISPATCH_ENABLE_ASSERTS
-DISPATCH_CFLAGS+=-DDISPATCH_DEBUG=1
+DISPATCH_CFLAGS+=-DDISPATCH_DEBUG=1 -fPIC
 endif
-AM_CFLAGS= $(PTHREAD_WORKQUEUE_CFLAGS) $(DISPATCH_CFLAGS) $(CBLOCKS_FLAGS)
+AM_CFLAGS= $(PTHREAD_WORKQUEUE_CFLAGS) $(DISPATCH_CFLAGS) $(CBLOCKS_FLAGS) -fPIC
 AM_OBJCFLAGS=$(DISPATCH_CFLAGS) $(CBLOCKS_FLAGS)
-AM_CXXFLAGS=$(PTHREAD_WORKQUEUE_CFLAGS) $(DISPATCH_CFLAGS) $(CXXBLOCKS_FLAGS)
+AM_CXXFLAGS=$(PTHREAD_WORKQUEUE_CFLAGS) $(DISPATCH_CFLAGS) $(CXXBLOCKS_FLAGS) -fPIC
 AM_OBJCXXFLAGS=$(DISPATCH_CFLAGS) $(CXXBLOCKS_FLAGS)
 
 if BUILD_OWN_PTHREAD_WORKQUEUES
@@ -116,7 +117,8 @@ libdispatch_la_LDFLAGS+=-Wl,-upward-lobjc -Wl,-upward-lauto \
 	-Wl,-order_file,$(top_srcdir)/xcodeconfig/libdispatch.order
 else
 libdispatch_la_SOURCES+=block.cpp
-libdispatch_la_CXXFLAGS=$(AM_CXXFLAGS) -std=gnu++11 -fno-exceptions
+libdispatch_la_CXXFLAGS=$(AM_CXXFLAGS) -std=gnu++11 -fno-exceptions -fPIC
+libdispatch_la_LDFLAGS+=-Wl,-Bsymbolic
 endif
 
 if USE_MIG
@@ -154,10 +156,11 @@ SWIFT_ABS_SRC_FILES = $(SWIFT_SRC_FILES:%=$(abs_srcdir)/%)
 SWIFT_OBJ_FILES = $(abs_builddir)/swift/swift_overlay.o
 SWIFT_LIBTOOL_OBJ_FILES = $(abs_builddir)/swift/swift_overlay.lo
 
-SWIFTC_FLAGS+= -Xcc -fmodule-map-file=$(abs_top_srcdir)/dispatch/module.modulemap -I$(abs_top_srcdir) -Xcc -fblocks
+SWIFTC_FLAGS+= -Xcc -fmodule-map-file=$(abs_top_srcdir)/dispatch/module.modulemap -I$(abs_top_srcdir) -Xcc -fPIC
 if DISPATCH_ENABLE_OPTIMIZATION
-SWIFTC_FLAGS+=-O
+SWIFTC_FLAGS+=-O -
 endif
+#-Xcc -fblocks 
 
 # this saves the object file, then tricks libtool into generating a .lo file and
 # then moves the object file back in the places libtool expects them to be for
@@ -172,7 +175,7 @@ $(abs_builddir)/swift/swift_overlay.o:	$(SWIFT_ABS_SRC_FILES) $(SWIFTC)
 	@rm -f $@
 	$(SWIFTC) -whole-module-optimization -emit-library -c $(SWIFT_ABS_SRC_FILES) \
 	$(SWIFTC_FLAGS) -module-name Dispatch -module-link-name dispatch \
-	-o $@ -emit-module-path $(abs_builddir)/swift/Dispatch.swiftmodule
+	-o $@ -emit-module-path $(abs_builddir)/swift/Dispatch.swiftmodule -Xcc -fPIC
 
 libdispatch_la_SOURCES+=swift/DispatchStubs.cc
 EXTRA_libdispatch_la_SOURCES+=$(SWIFT_SRC_FILES)

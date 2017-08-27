@@ -32,7 +32,11 @@
 #endif
 
 #if !TARGET_OS_WIN32
+#if defined(__HAIKU__)
+#include <signal.h>
+#else
 #include <sys/signal.h>
+#endif
 #endif
 
 DISPATCH_ASSUME_NONNULL_BEGIN

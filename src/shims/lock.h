@@ -140,7 +140,54 @@ _dispatch_lock_has_failed_trylock(dispatch_lock lock_value)
 {
 	return !(lock_value & DLOCK_FAILED_TRYLOCK_BIT);
 }
+#elif defined(__HAIKU__)
+#include <unistd.h>
 
+typedef uint32_t dispatch_lock;
+typedef pid_t dispatch_lock_owner;
+
+#define DLOCK_OWNER_NULL			((dispatch_lock_owner)0)
+#define DLOCK_OWNER_MASK			((dispatch_lock)0xfffffffc)
+#define DLOCK_OWNER_INVALID			((dispatch_lock)0xffffffff)
+#define DLOCK_WAITERS_BIT			((dispatch_lock)0x00000001)
+#define DLOCK_FAILED_TRYLOCK_BIT	((dispatch_lock)0x00000002)
+#define _dispatch_tid_self()		((dispatch_lock_owner)0)
+//#define _dispatch_tid_self() \
+//		((dispatch_lock_owner)(_dispatch_get_tsd_base()->tid))
+DISPATCH_ALWAYS_INLINE
+static inline bool
+_dispatch_lock_is_locked(dispatch_lock lock_value)
+{
+	return (lock_value & DLOCK_OWNER_MASK) != 0;
+}
+
+DISPATCH_ALWAYS_INLINE
+static inline dispatch_lock_owner
+_dispatch_lock_owner(dispatch_lock lock_value)
+{
+	return (lock_value & DLOCK_OWNER_MASK);
+}
+
+DISPATCH_ALWAYS_INLINE
+static inline bool
+_dispatch_lock_is_locked_by(dispatch_lock lock_value, dispatch_lock_owner tid)
+{
+	return _dispatch_lock_owner(lock_value) == tid;
+}
+
+DISPATCH_ALWAYS_INLINE
+static inline bool
+_dispatch_lock_has_waiters(dispatch_lock lock_value)
+{
+	return (lock_value & DLOCK_WAITERS_BIT);
+}
+
+DISPATCH_ALWAYS_INLINE
+static inline bool
+_dispatch_lock_has_failed_trylock(dispatch_lock lock_value)
+{
+	return !(lock_value & DLOCK_FAILED_TRYLOCK_BIT);
+}
 #else
 #  error define _dispatch_lock encoding scheme for your platform here
 #endif

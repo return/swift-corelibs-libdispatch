@@ -29,6 +29,10 @@
 #	include <sys/event.h>
 #	define DISPATCH_EVENT_BACKEND_EPOLL 0
 #	define DISPATCH_EVENT_BACKEND_KEVENT 1
+#elif __has_include(<event.h>)
+#	include <event.h>
+#	define DISPATCH_EVENT_BACKEND_EPOLL 0
+#	define DISPATCH_EVENT_BACKEND_KEVENT 0
 #else
 #	error unsupported event loop
 #endif

@@ -30,6 +30,14 @@
 #endif
 
 #include <string.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/cdefs.h>
+#define __printflike(a,b) __PRINTFLIKE(a,b)
+typedef uint32_t mach_error_t;
+
+
+
 
 static inline const char*
 __BASENAME__(const char *_str_)
@@ -127,7 +135,7 @@ void _test_errno(const char* file, long line, const char* desc, long actual, lon
 #define test_errno(a,b,c) _test_errno(__SOURCE_FILE__, __LINE__, a, b, c)
 void test_errno_format(long actual, long expected, const char *format, ...) __printflike(3,4);
 
-#ifndef __linux__
+#if !defined(__linux__) || !defined(__HAIKU__)
 void _test_mach_error(const char* file, long line, const char* desc, mach_error_t actual, mach_error_t expected);
 #define test_mach_error(a,b,c) _test_mach_error(__SOURCE_FILE__, __LINE__, a, b, c)
 void test_mach_error_format(mach_error_t actual, mach_error_t expected, const char *format, ...) __printflike(3,4);

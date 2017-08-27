@@ -28,12 +28,16 @@
 #define __DISPATCH_OS_SHIMS__
 
 #include <pthread.h>
-#ifdef __linux__
+#if defined(__linux__)
 #include "shims/linux_stubs.h"
 #endif
 
-#ifdef __ANDROID__
+#if defined(__ANDROID__)
 #include "shims/android_stubs.h"
+#endif
+
+#if defined(__HAIKU__)
+#include "shims/haiku_stubs.h"
 #endif
 
 #include "shims/priority.h"

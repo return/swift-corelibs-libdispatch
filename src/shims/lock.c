@@ -446,6 +446,9 @@ _dispatch_wait_on_address(uint32_t volatile *address, uint32_t value,
 	_dispatch_ulock_wait((uint32_t *)address, value, 0, flags);
 #elif HAVE_FUTEX
 	_dispatch_futex_wait((uint32_t *)address, value, NULL, FUTEX_PRIVATE_FLAG);
+	
+#elif defined(__HAIKU__)
+	_dispatch_ulock_wait((uint32_t *)address, value, 0, flags);
 #else
 	mach_msg_timeout_t timeout = 1;
 	while (os_atomic_load(address, relaxed) == value) {

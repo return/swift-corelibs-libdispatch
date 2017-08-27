@@ -21,7 +21,7 @@
 #include <dispatch/dispatch.h>
 #include <stdlib.h>
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__HAIKU__)
 // On Linux normally comes from libbsd overlay files,
 // but the headers are not c99 compliant so we compile
 // this test case without $(BSD_OVERLAY_CFLAGS)

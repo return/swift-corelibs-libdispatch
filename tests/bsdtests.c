@@ -27,14 +27,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#if !defined(__HAIKU__)
 #include <sys/errno.h>
+#endif
 #include <sys/wait.h>
 #include <string.h>
 #ifdef __APPLE__
 #include <crt_externs.h>
 #include <mach/mach_error.h>
 #endif
+#if !defined(__HAIKU__)
 #include <spawn.h>
+#endif
 #include <inttypes.h>
 #include "bsdtests.h"
 
@@ -409,7 +413,7 @@ test_start(const char* desc)
 	usleep(100000);	// give 'gdb --waitfor=' a chance to find this proc
 }
 
-#if __linux__
+#if defined(__linux__) || defined(__HAIKU__)
 static char** get_environment(void)
 {
 	extern char **environ; 
@@ -457,6 +461,9 @@ test_leaks_pid(const char *name, pid_t pid)
 	snprintf(pidstr, sizeof(pidstr), "%d", pid);
 
 	char* args[] = { "./leaks-wrapper", pidstr, NULL };
+	#if defined(__HAIKU__)
+	
+	#else
 	res = posix_spawnp(&pid, args[0], NULL, NULL, args, get_environment());
 	if (res == 0 && pid > 0) {
 		int status;
@@ -465,7 +472,9 @@ test_leaks_pid(const char *name, pid_t pid)
 	} else {
 		perror(args[0]);
 	}
+	#endif
 }
+
 
 void
 test_leaks(const char *name)

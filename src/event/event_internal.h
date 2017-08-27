@@ -28,7 +28,7 @@
 #define __DISPATCH_EVENT_EVENT_INTERNAL__
 
 #include "event_config.h"
-
+#include "queue.h"
 typedef struct dispatch_wlh_s *dispatch_wlh_t; // opaque handle
 #define DISPATCH_WLH_GLOBAL ((dispatch_wlh_t)(void*)(~0ul))
 #define DISPATCH_WLH_MANAGER ((dispatch_wlh_t)(void*)(~2ul))
@@ -287,8 +287,11 @@ typedef struct dispatch_deferred_items_s {
 	dispatch_queue_t ddi_stashed_rq;
 	dispatch_queue_t ddi_stashed_dq;
 #if DISPATCH_EVENT_BACKEND_KEVENT
+#if defined(__HAIKU__)
+	#else
 	int ddi_nevents;
 	dispatch_kevent_s ddi_eventlist[DISPATCH_DEFERRED_ITEMS_EVENT_COUNT];
+#endif
 #endif
 } dispatch_deferred_items_s, *dispatch_deferred_items_t;
 
@@ -379,7 +382,11 @@ DISPATCH_ALWAYS_INLINE
 static inline bool
 _dispatch_unote_needs_rearm(dispatch_unote_t du)
 {
+#if defined(__HAIKU__) // FIXME: FIX FOR HAIKU
+	return false;
+#else
 	return du._du->du_type->dst_flags & (EV_ONESHOT | EV_DISPATCH);
+#endif
 }
 
 DISPATCH_ALWAYS_INLINE

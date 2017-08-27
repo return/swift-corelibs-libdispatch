@@ -4070,7 +4070,11 @@ _dispatch_return_to_kernel(void)
 	if (unlikely(_dispatch_get_wlh() == DISPATCH_WLH_GLOBAL)) {
 		_dispatch_clear_return_to_kernel();
 	} else {
+	#if defined(__HAIKU__)
+		// HAIKU FIXME
+	#else
 		_dispatch_event_loop_drain(KEVENT_FLAG_IMMEDIATE);
+	#endif
 	}
 }
 

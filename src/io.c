@@ -420,7 +420,9 @@ dispatch_io_create_with_path(dispatch_io_type_t type, const char *path,
 		_dispatch_io_syscall_switch_noerr(err,
 			(path_data->oflag & O_NOFOLLOW) == O_NOFOLLOW
 #ifndef __linux__
+#ifndef __HAIKU__
 					|| (path_data->oflag & O_SYMLINK) == O_SYMLINK
+#endif
 #endif
 					? lstat(path_data->path, &st) : stat(path_data->path, &st),
 			case 0:
@@ -2138,7 +2140,7 @@ _dispatch_operation_advise(dispatch_operation_t op, size_t chunk_size)
 {
 	_dispatch_op_debug("advise", op);
 	if (_dispatch_io_get_error(op, NULL, true)) return;
-#ifdef __linux__
+#if defined(__linux__) || defined(__HAIKU__)
 	// linux does not support fcntl (F_RDAVISE)
 	// define necessary datastructure and use readahead
 	struct radvisory {
@@ -2165,7 +2167,7 @@ _dispatch_operation_advise(dispatch_operation_t op, size_t chunk_size)
 	}
 	advise.ra_offset = op->advise_offset;
 	op->advise_offset += advise.ra_count;
-#ifdef __linux__
+#if defined(__linux__) || defined(__HAIKU__)
 	_dispatch_io_syscall_switch(err,
 		readahead(op->fd_entry->fd, advise.ra_offset, advise.ra_count),
 		case EINVAL: break; // fd does refer to a non-supported filetype

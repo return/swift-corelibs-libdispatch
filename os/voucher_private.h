@@ -22,8 +22,10 @@
 #define __OS_VOUCHER_PRIVATE__
 
 #ifndef __linux__
+#ifndef __HAIKU__
 #include <os/base.h>
 #include <os/availability.h>
+#endif
 #endif
 #if __has_include(<mach/mach.h>)
 #include <os/object.h>

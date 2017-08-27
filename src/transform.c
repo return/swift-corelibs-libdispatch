@@ -24,6 +24,8 @@
 #include <libkern/OSByteOrder.h>
 #elif __linux__
 #include <endian.h>
+#elif __HAIKU__
+#include <ByteOrder.h>
 #define OSLittleEndian __LITTLE_ENDIAN
 #define OSBigEndian __BIG_ENDIAN
 #define OSSwapLittleToHostInt16 le16toh

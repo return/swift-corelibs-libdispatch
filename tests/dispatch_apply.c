@@ -30,7 +30,9 @@
 #ifdef __ANDROID__
 #include <linux/sysctl.h>
 #else
+#if !defined(__HAIKU__)
 #include <sys/sysctl.h>
+#endif
 #endif /* __ANDROID__ */
 
 #include <bsdtests.h>
@@ -76,7 +78,7 @@ void busythread(void *ignored)
 void test_apply_contended(dispatch_queue_t dq)
 {
 	uint32_t activecpu;
-#ifdef __linux__
+#if defined(__linux__) || defined(__HAIKU__) 
 	activecpu = sysconf(_SC_NPROCESSORS_ONLN);
 #else
 	size_t s = sizeof(activecpu);
